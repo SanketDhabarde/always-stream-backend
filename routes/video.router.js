@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const { getAllVideos } = require("../handlers/video.handler");
 
-router.get("/", (req, res) => {
-  res.status(200).json({ message: "videos" });
-});
+router.route("/").get(getAllVideos);
 
 module.exports = router;
