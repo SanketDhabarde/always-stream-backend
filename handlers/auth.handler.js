@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../models/user.modal");
 
 const signUpHandler = async (req, res) => {
+  const { email, passward, ...rest } = req.body;
   try {
-    const { email, passward, ...rest } = req.body;
     const foundUser = await User.findOne({ email });
     if (foundUser) {
       return res.status(422).json({
@@ -52,4 +52,41 @@ const signUpHandler = async (req, res) => {
   }
 };
 
-module.exports = { signUpHandler };
+const loginHandler = async (req, res) => {
+  const { email, passward } = req.body;
+  try {
+    const foundUser = await User.findOne({ email });
+
+    if (!foundUser) {
+      return res.status(404).json({
+        message: "The email you entered is not Registered. Not Found error",
+      });
+    }
+
+    if (!bcrypt.compareSync(passward, foundUser.passward)) {
+      return res.status(401).json({
+        error: "The credentials you entered are invalid.",
+      });
+    }
+
+    const encodedToken = jwt.sign(
+      { _id: foundUser._id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h",
+      }
+    );
+
+    foundUser.passward = undefined;
+
+    return res.status(200).json({
+      foundUser,
+      encodedToken,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong!" });
+  }
+};
+
+module.exports = { signUpHandler, loginHandler };
