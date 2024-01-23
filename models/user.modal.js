@@ -11,7 +11,13 @@ const userSchema = new Schema({
   lastName: String,
   likes: [videoSchema],
   history: [videoSchema],
-  playlists: [videoSchema],
+  playlists: [
+    {
+      _id: String,
+      title: String,
+      videos: [videoSchema],
+    },
+  ],
   watchlater: [videoSchema],
 });
 
