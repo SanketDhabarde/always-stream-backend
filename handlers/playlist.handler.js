@@ -91,10 +91,32 @@ const addVideoToPlaylist = async (req, res) => {
   }
 };
 
+const removeVideoFromPlaylist = async (req, res) => {
+  const { userId } = req.user;
+  const { playlistId, videoId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    const playlist = user.playlists.find(
+      (playlist) => playlist._id === playlistId
+    );
+    playlist.videos = playlist?.videos.filter(video => video._id != videoId);
+
+    const playlists = user.playlists.map((_playlist) =>
+      _playlist._id === playlistId ? playlist : _playlist
+    );
+    await User.findByIdAndUpdate(userId, { playlists });
+    return res.status(200).json({ playlist });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error });
+  }
+}
+
 module.exports = {
   getPlaylists,
   createPlaylist,
   removePlayList,
   getVideosFromPlaylist,
   addVideoToPlaylist,
+  removeVideoFromPlaylist
 };
