@@ -47,4 +47,54 @@ const removePlayList = async (req, res) => {
   }
 };
 
-module.exports = { getPlaylists, createPlaylist, removePlayList };
+const getVideosFromPlaylist = async (req, res) => {
+  const { userId } = req.user;
+  const { playlistId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    const playlist = user.playlists.find(
+      (playlist) => playlist._id === playlistId
+    );
+    return res.status(200).json({ playlist });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error });
+  }
+};
+
+const addVideoToPlaylist = async (req, res) => {
+  const { userId } = req.user;
+  const { playlistId } = req.params;
+  const { video } = req.body;
+  try {
+    const user = await User.findById(userId);
+    const playlist = user.playlists.find(
+      (playlist) => playlist._id === playlistId
+    );
+
+    if (playlist.videos.some((_video) => _video._id == video._id)) {
+      return res
+        .status(409)
+        .json({ error: "Video already exists in playlist" });
+    }
+
+    playlist.videos.push(video);
+
+    const playlists = user.playlists.map((_playlist) =>
+      _playlist._id === playlistId ? playlist : _playlist
+    );
+    await User.findByIdAndUpdate(userId, { playlists });
+    return res.status(200).json({ playlist });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error });
+  }
+};
+
+module.exports = {
+  getPlaylists,
+  createPlaylist,
+  removePlayList,
+  getVideosFromPlaylist,
+  addVideoToPlaylist,
+};
