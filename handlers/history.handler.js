@@ -29,7 +29,35 @@ const addVideoToHistory = async (req, res) => {
   }
 };
 
+const removeVideoFromHistory = async (req, res) => {
+  const { userId } = req.user;
+  const { videoId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    const history = user.history.filter((video) => video._id != videoId);
+    await User.findByIdAndUpdate(userId, { history });
+    return res.status(200).json({ history });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error });
+  }
+};
+
+const clearAllTheHistory = async (req, res) => {
+  const { userId } = req.user;
+  try {
+    const history = [];
+    await User.findByIdAndUpdate(userId, { history });
+    return res.status(200).json({ history });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error });
+  }
+};
+
 module.exports = {
   getAllHistory,
-  addVideoToHistory
+  addVideoToHistory,
+  removeVideoFromHistory,
+  clearAllTheHistory,
 };
