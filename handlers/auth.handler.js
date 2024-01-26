@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../models/user.modal");
 
 const signUpHandler = async (req, res) => {
-  const { email, passward, ...rest } = req.body;
+  const { email, password, ...rest } = req.body;
   try {
     const foundUser = await User.findOne({ email });
     if (foundUser) {
@@ -14,11 +14,11 @@ const signUpHandler = async (req, res) => {
     }
 
     const _id = uuid();
-    const encryptedPassward = bcrypt.hashSync(passward, 7);
+    const encryptedPassword = bcrypt.hashSync(password, 7);
     const newUser = {
       _id,
       email,
-      passward: encryptedPassward,
+      password: encryptedPassword,
       ...rest,
       likes: [],
       history: [],
@@ -53,7 +53,7 @@ const signUpHandler = async (req, res) => {
 };
 
 const loginHandler = async (req, res) => {
-  const { email, passward } = req.body;
+  const { email, password } = req.body;
   try {
     const foundUser = await User.findOne({ email });
 
@@ -63,7 +63,7 @@ const loginHandler = async (req, res) => {
       });
     }
 
-    if (!bcrypt.compareSync(passward, foundUser.passward)) {
+    if (!bcrypt.compareSync(password, foundUser.password)) {
       return res.status(401).json({
         error: "The credentials you entered are invalid.",
       });
@@ -77,7 +77,7 @@ const loginHandler = async (req, res) => {
       }
     );
 
-    foundUser.passward = undefined;
+    foundUser.password = undefined;
 
     return res.status(200).json({
       foundUser,

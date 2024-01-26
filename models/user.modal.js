@@ -4,7 +4,7 @@ const { videoSchema } = require("./video.model");
 const userSchema = new Schema({
   _id: String,
   email: String,
-  passward: String,
+  password: String,
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
   firstName: String,
