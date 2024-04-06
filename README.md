@@ -45,6 +45,10 @@
   - [POST] `/api/user/playlists/:playlistId`
   - [DELETE] `/api/user/playlists/:playlistId`
   - [DELETE]  `/api/user/playlists/:playlistId/:videoId`
+## 👩‍💻 Run backend
+```bash
+docker run -p 3000:3000 -e MONGO_DB_URL="your_db_url" sanketdhabarde/always-stream-backend
+```
 
 ## 👩‍💻 Start locally
 ```bash
