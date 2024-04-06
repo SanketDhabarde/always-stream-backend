@@ -46,6 +46,11 @@
   - [DELETE] `/api/user/playlists/:playlistId`
   - [DELETE]  `/api/user/playlists/:playlistId/:videoId`
 
+## 👩‍💻 Start locally
+```bash
+docker-compose up
+```
+
 
 ## 👨‍💻 Connect with me 
 
